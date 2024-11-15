@@ -1,27 +1,43 @@
 package com.lobotomia.lobotomia.Model;
 
 import jakarta.annotation.Nullable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.*;
+import org.hibernate.validator.constraints.NotEmpty;
 
+@Entity
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
+    @NotNull
+    @Max(10)
     String firstName;
+    @NotNull
+    @Min(2)
     String surName;
     @Nullable
+    @Null
     String lastName;
+    @NotEmpty
+    @Size(min = 2, max = 10, message = "Длина должна быть от 2 до 10 символов")
     String role;
     boolean isDeleted = false;
 
-    public User(int id, String firstName, String surname, String lastName, String role) {
+    public User(int id, @NotNull String firstName, @NotNull String surName, @Nullable String lastName, String role) {
         this.id = id;
         this.firstName = firstName;
-        surName = surname;
+        this.surName = surName;
         this.lastName = lastName;
         this.role = role;
     }
 
-    public User(String firstName, String surname, String lastName, String role) {
+    public User(@NotNull String firstName, @NotNull String surName, @Nullable String lastName, String role) {
         this.firstName = firstName;
-        surName = surname;
+        this.surName = surName;
         this.lastName = lastName;
         this.role = role;
     }
@@ -34,35 +50,35 @@ public class User {
         this.id = id;
     }
 
-    public String getFirstName() {
+    public @NotNull String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(@NotNull String firstName) {
         this.firstName = firstName;
     }
 
-    public String getSurname() {
+    public @NotNull String getSurName() {
         return surName;
     }
 
-    public void setSurname(String surname) {
-        surName = surname;
+    public void setSurName(@NotNull String surName) {
+        this.surName = surName;
     }
 
-    public String getLastName() {
+    public @Nullable String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
-        lastName = lastName;
+    public void setLastName(@Nullable String lastName) {
+        this.lastName = lastName;
     }
 
-    public String getRole() {
+    public @NotEmpty String getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(@NotEmpty String role) {
         this.role = role;
     }
 
