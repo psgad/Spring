@@ -1,68 +1,79 @@
 package com.lobotomia.lobotomia.controllers;
 
+import com.lobotomia.lobotomia.Model.Pagination;
+import com.lobotomia.lobotomia.Model.Users;
+import com.lobotomia.lobotomia.Service.UserService;
+import jakarta.validation.Valid;
+import org.apache.catalina.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
+@RequestMapping("/users")
 public class MainController {
-    @GetMapping("/")
-    public String home(Model model) {
-        model.addAttribute("name", "psgad");
-        return "homePage";
+    @Autowired
+    public UserService userService;
+
+
+    @GetMapping("/all")
+    public String getAllUsers(Model model,
+                       @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                       @RequestParam(name = "firstname", required = false) String firstName,
+                       @RequestParam(name = "surname", required = false) String surname,
+                       @RequestParam(name = "lastname", required = false) String lastname,
+                       @RequestParam(name = "role", required = false) String role) {
+        List<Users> users = userService.findAllUsers();
+        System.out.println("количество пользователей: " + users.size());
+        model.addAttribute("pagination_users", users);
+        model.addAttribute("user", new Users());
+
+        return "users";
+
     }
 
-    @PostMapping("calculate")
-    public String calculate(@RequestParam("operand1") double operand1,
-                            @RequestParam("operand2") double operand2,
-                            @RequestParam("operator") String operator,
-                            Model model) {
-        double result = switch (operator) {
-            case "+" -> operand1 + operand2;
-            case "-" -> operand1 - operand2;
-            case "/" -> operand1 / operand2;
-            case "*" -> operand1 * operand2;
-            default -> 0.0;
-        };
-        model.addAttribute("result", result);
-        return "result";
-    }
-
-    @GetMapping("/calculator")
-    public String calculator() {
-        return "calculator";
-    }
-
-    @GetMapping("/currency-converter")
-    public String convertCurrency() {
-        return "converter";
-    }
-
-    @PostMapping("/convert")
-    public String convert(@RequestParam("count") double count,
-                          @RequestParam("from-convert") String from_convert,
-                          @RequestParam("to_convert") String to_convert,
-                          Model model) {
-        double result = count;
-        if (from_convert.equals("RUB")) {
-            if (to_convert.equals("EUR")) result = count * 0.009356;
-            else if (to_convert.equals("USD")) result = count * 0.010198;
-        } else if (from_convert.equals("USD")) {
-            if (to_convert.equals("RUB")) result = count * 98.06;
-            else if (to_convert.equals("EUR")) result = count * 0.93568;
-        } else if (from_convert.equals("EUR")) {
-            if (to_convert.equals("USD")) result = count * 1.07;
-            else if (to_convert.equals("USD")) result = count * 106.89;
+    @PostMapping("/add")
+    public String addUser(@Valid @ModelAttribute("users") Users user, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            List<Users> users = userService.findAllUsers();
+            model.addAttribute("pagination_users", users);
+            model.addAttribute("users", userService.findAllUsers());
+            return "users";
         }
-        model.addAttribute("result", result);
-        return "result";
+        userService.addUser(user);
+        return "redirect:/users/all";
+
+
     }
+
+    @PostMapping("/update")
+    public String updateUser(@Valid @ModelAttribute("users") Users user, BindingResult result) {
+        userService.editUser(user);
+        return "redirect:/users/all";
+
+    }
+
+    @PostMapping("/delete")
+    public String deleteUser(@RequestBody ArrayList<Long> ids) {
+        for(Long id : ids) {
+            userService.deleteUser(id);
+        }
+        return "redirect:/users/all";
+
+    }
+    @GetMapping("/all/{id}")
+    public String getIdStudent(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("users", userService.findUserById(id));
+        model.addAttribute("user", new Users());
+        return "users";
+    }
+
+
 }
 
