@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Users</title>
+    <title>Students</title>
     <style>
         body {
             background-color: #121212;
@@ -86,23 +86,20 @@
             <tr>
                 <th></th>
                 <th>ID</th>
-                <th>Имя</th>
-                <th>Фамилия</th>
-                <th>Отчество</th>
-                <th>Роль</th>
+                <th>ФИО</th>
+                <th>Группа</th>
+                <th>Курс</th>
             </tr>
             </thead>
             <tbody>
-            <th:block th:each="user: ${pagination_users}">
-                <tr th:data-id="${user.getId()}" th:data-firstname="${user.getFirstName()}"
-                    th:data-surname="${user.getSurName()}" th:data-lastname="${user.getLastName()}"
-                    th:data-role="${user.getRole()}">
+            <th:block th:each="student: ${pagination_students}">
+                <tr th:data-id="${student.getId()}" th:data-FIO="${student.getFIO()}"
+                    th:data-group="${student.getGroup()}" th:data-course="${student.getCourse()}">
                     <td><input type="checkbox" class="selectRow"/></td>
-                    <td th:text="${user.getId()}"></td>
-                    <td th:text="${user.getFirstName()}"></td>
-                    <td th:text="${user.getSurName()}"></td>
-                    <td th:text="${user.getLastName()}"></td>
-                    <td th:text="${user.getRole()}"></td>
+                    <td th:text="${student.getId()}"></td>
+                    <td th:text="${student.getFIO()}"></td>
+                    <td th:text="${student.getGroup()}"></td>
+                    <td th:text="${student.getCourse()}"></td>
                 </tr>
             </th:block>
             </tbody>
@@ -119,28 +116,26 @@
     </div>
     <div class="content">
         <header>
-            <h2>Создание пользователя</h2>
+            <h2>Создание Студента</h2>
         </header>
-        <form class="createUser form-inline" method="POST" action="/users/add" id="userForm" th:object="${user}">
-            <input placeholder="Имя" id="firstname" th:field="*{firstName}" required>
-            <input placeholder="Фамилия" id="surname" th:field="*{surName}" required>
-            <input placeholder="Отчество" required th:field="*{lastName}">
-            <input placeholder="Роль" id="role" th:field="*{role}" required>
+        <form class="createUser form-inline" method="POST" action="/students/add" id="userForm" th:object="${student}">
+            <input placeholder="ФИО" id="firstname" th:field="*{FIO}" required>
+            <input placeholder="Группа" id="surname" th:field="*{group}" required>
+            <input placeholder="Курс" type="number" required th:field="*{course}">
             <button type="submit" formmethod="post">Создать</button>
         </form>
     </div>
 
     <div class="content">
         <header>
-            <h2>Обновление пользователя</h2>
+            <h2>Обновление данных студента</h2>
         </header>
-        <form class="updateUser form-inline" method="POST" action="/users/update" id="updateUserForm"
-              th:object="${user}">
+        <form class="updateUser form-inline" method="POST" action="/students/update" id="updateUserForm"
+              th:object="${student}">
             <input type="hidden" name="id" id="updateUserId" th:field="*{id}"/>
-            <input placeholder="Имя" th:field="*{firstName}" required id="updateFirstname">
-            <input placeholder="Фамилия" th:field="*{surName}" required id="updateSurname">
-            <input placeholder="Отчество" id="updateLastname" required th:field="*{lastName}">
-            <input placeholder="Роль" id="updateRole" th:field="*{role}" required>
+            <input placeholder="ФИО" th:field="*{FIO}" required id="updateFirstname">
+            <input placeholder="Группа" th:field="*{group}" required id="updateSurname">
+            <input placeholder="Курс" type="number" id="updateLastname" required th:field="*{course}">
             <button type="submit" formmethod="post">Обновить</button>
         </form>
     </div>
@@ -155,10 +150,9 @@
         row.addEventListener('click', function() {
             // Для обновления
             document.getElementById('updateUserId').value = this.getAttribute('data-id');
-            document.getElementById('updateFirstname').value = this.getAttribute('data-firstname');
-            document.getElementById('updateSurname').value = this.getAttribute('data-surname');
-            document.getElementById('updateLastname').value = this.getAttribute('data-lastname');
-            document.getElementById('updateRole').value = this.getAttribute('data-role');
+            document.getElementById('updateFirstname').value = this.getAttribute('data-FIO');
+            document.getElementById('updateSurname').value = this.getAttribute('data-group');
+            document.getElementById('updateLastname').value = this.getAttribute('data-course');
         });
     });
     document.getElementById('delete').addEventListener('click', function() {
@@ -170,7 +164,7 @@
         return;
     }
 
-    fetch('/users/delete', {
+    fetch('/students/delete', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -190,7 +184,7 @@
         console.error('Ошибка:', error);
         alert('Произошла ошибка при удалении пользователей.');
     });
-});
+  });
 </script>
 
 </body>

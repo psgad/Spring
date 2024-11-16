@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/lobotomia
     username: postgres
-    password: 1
+    password: 123
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -17,3 +17,5 @@ spring:
         format_sql:
 server:
   port: 5252
+some:
+  value: false
