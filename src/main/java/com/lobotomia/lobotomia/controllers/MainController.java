@@ -1,71 +1,79 @@
 package com.lobotomia.lobotomia.controllers;
 
 import com.lobotomia.lobotomia.Model.Pagination;
-import com.lobotomia.lobotomia.Model.User;
-import com.lobotomia.lobotomia.Repository.UserRepository;
+import com.lobotomia.lobotomia.Model.Users;
 import com.lobotomia.lobotomia.Service.UserService;
-import org.slf4j.LoggerFactory;
+import jakarta.validation.Valid;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Controller
+@RequestMapping("/users")
 public class MainController {
     @Autowired
-    UserService userService;
+    public UserService userService;
 
-    @GetMapping("/users")
-    public String home(Model model,
+
+    @GetMapping("/all")
+    public String getAllUsers(Model model,
                        @RequestParam(name = "page", required = false, defaultValue = "1") int page,
                        @RequestParam(name = "firstname", required = false) String firstName,
                        @RequestParam(name = "surname", required = false) String surname,
                        @RequestParam(name = "lastname", required = false) String lastname,
                        @RequestParam(name = "role", required = false) String role) {
-        Pagination<User> users = userService.getAll(page, firstName, surname, lastname, role);
-        System.out.println("количество пользователей: " + users.getCurrentItems().size());
+        List<Users> users = userService.findAllUsers();
+        System.out.println("количество пользователей: " + users.size());
         model.addAttribute("pagination_users", users);
-        model.addAttribute("categories", userService.GetAllCategory());
+        model.addAttribute("user", new Users());
+
         return "users";
 
     }
 
-    @PostMapping("/users")
-    public String addUser(@RequestParam("firstname") String firstname,
-                          @RequestParam("surname") String surname,
-                          @RequestParam("lastname") String lastname,
-                          @RequestParam("role") String role,
-                          Model model) {
-        System.out.println(firstname);
-        userService.addUser(new User(firstname, surname, lastname, role));
-        return "redirect:/users";
+    @PostMapping("/add")
+    public String addUser(@Valid @ModelAttribute("users") Users user, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            List<Users> users = userService.findAllUsers();
+            model.addAttribute("pagination_users", users);
+            model.addAttribute("users", userService.findAllUsers());
+            return "users";
+        }
+        userService.addUser(user);
+        return "redirect:/users/all";
+
+
     }
 
-    @PostMapping("users/update")
-    public String updateStudent(@RequestParam("id") int id,
-                                @RequestParam("firstname") String firstname,
-                                @RequestParam("surname") String surname,
-                                @RequestParam("lastname") String lastname,
-                                @RequestParam("role") String role) {
-        User user = new User(id, firstname, surname, lastname, role);
+    @PostMapping("/update")
+    public String updateUser(@Valid @ModelAttribute("users") Users user, BindingResult result) {
         userService.editUser(user);
-        return "redirect:/users";
+        return "redirect:/users/all";
+
     }
 
-    @PostMapping("users/delete")
-    public String deleteUsers(@RequestBody List<Integer> ids) {
-        for (Integer id : ids) {
+    @PostMapping("/delete")
+    public String deleteUser(@RequestBody ArrayList<Long> ids) {
+        for(Long id : ids) {
             userService.deleteUser(id);
         }
-        return "redirect:/users";
+        return "redirect:/users/all";
+
     }
+    @GetMapping("/all/{id}")
+    public String getIdStudent(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("users", userService.findUserById(id));
+        model.addAttribute("user", new Users());
+        return "users";
+    }
+
 
 }
 

@@ -7,27 +7,28 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.beans.factory.annotation.Value;
 
 @Entity
-public class User {
+public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+    Long id;
     @NotNull
-    @Max(10)
     String firstName;
     @NotNull
-    @Min(2)
     String surName;
     @Nullable
-    @Null
     String lastName;
     @NotEmpty
     @Size(min = 2, max = 10, message = "Длина должна быть от 2 до 10 символов")
     String role;
+    @Value("${some.value}")
     boolean isDeleted = false;
 
-    public User(int id, @NotNull String firstName, @NotNull String surName, @Nullable String lastName, String role) {
+    public Users(){}
+
+    public Users(Long id, @NotNull String firstName, @NotNull String surName,@Nullable String lastName, String role) {
         this.id = id;
         this.firstName = firstName;
         this.surName = surName;
@@ -35,18 +36,18 @@ public class User {
         this.role = role;
     }
 
-    public User(@NotNull String firstName, @NotNull String surName, @Nullable String lastName, String role) {
+    public Users(@NotNull String firstName, @NotNull String surName,@Nullable String lastName, String role) {
         this.firstName = firstName;
         this.surName = surName;
         this.lastName = lastName;
         this.role = role;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -1,6 +1,7 @@
 package com.lobotomia.lobotomia.Model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Pagination<T> {
     private final int maxItemsOnPage = 2;
@@ -16,7 +17,7 @@ public class Pagination<T> {
         currentNumberItems = currentItems.size();
     }
 
-    private int getTotalNumberPages(ArrayList<T> currentItems) {
+    private int getTotalNumberPages(List<T> currentItems) {
         int page = currentItems.size() / maxItemsOnPage;
         if (currentItems.size() % maxItemsOnPage > 0)
             page++;
