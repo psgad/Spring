@@ -1,10 +1,9 @@
 package com.lobotomia.lobotomia.Repository;
 
-import com.lobotomia.lobotomia.Model.Users;
+import com.lobotomia.lobotomia.Model.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-
-public interface UserRepository extends JpaRepository<Users, UUID> {
+public interface ProfileRepository extends JpaRepository<Profile, UUID> {
 }
