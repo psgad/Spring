@@ -1,15 +1,16 @@
 package com.lobotomia.lobotomia.Service;
 
-import com.lobotomia.lobotomia.Model.Roles;
-import com.lobotomia.lobotomia.Model.Users;
+import com.lobotomia.lobotomia.Model.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
-public class RolesService extends BaseService<Roles, Long> {
+public class ProfileService extends BaseService<Profile, UUID> {
     @Autowired
-    public RolesService(JpaRepository<Roles, Long> repository) {
+    public ProfileService(JpaRepository<Profile, UUID> repository) {
         super(repository);
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/students")
@@ -27,7 +28,7 @@ public class StudentController {
                               @RequestParam(name = "FIO", required = false) String FIO,
                               @RequestParam(name = "group", required = false) String group,
                               @RequestParam(name = "course", required = false) String course) {
-        List<Student> students = studentService.findAllStudent();
+        List<Student> students = studentService.findAll();
         System.out.println("количество студентов: " + students.size());
         model.addAttribute("pagination_students", students);
         model.addAttribute("student", new Student());
@@ -39,12 +40,12 @@ public class StudentController {
     @PostMapping("/add")
     public String addUser(@Valid @ModelAttribute("student") Student student, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            List<Student> students = studentService.findAllStudent();
+            List<Student> students = studentService.findAll();
             System.out.println("количество студентов: " + students.size());
             model.addAttribute("pagination_users", students);
             model.addAttribute("student", new Student());
         }
-        studentService.addStudent(student);
+        studentService.add(student);
         return "redirect:/students/all";
 
 
@@ -52,22 +53,22 @@ public class StudentController {
 
     @PostMapping("/update")
     public String updateUser(@Valid @ModelAttribute("student") Student student, BindingResult result) {
-        studentService.editStudent(student);
+        studentService.edit(student.getId(), student);
         return "redirect:/students/all";
 
     }
 
     @PostMapping("/delete")
-    public String deleteUser(@RequestBody ArrayList<Long> ids) {
-        for(Long id : ids) {
-            studentService.deleteStudent(id);
+    public String deleteUser(@RequestBody ArrayList<UUID> ids) {
+        for(UUID id : ids) {
+            studentService.delete(id);
         }
         return "redirect:/students/all";
 
     }
     @GetMapping("/all/{id}")
-    public String getIdStudent(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("students", studentService.findStudentById(id));
+    public String getIdStudent(@PathVariable("id") UUID id, Model model) {
+        model.addAttribute("students", studentService.findById(id));
         model.addAttribute("student", new Student());
         return "students";
     }
