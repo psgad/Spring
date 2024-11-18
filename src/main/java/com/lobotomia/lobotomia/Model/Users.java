@@ -22,13 +22,16 @@ public class Users {
     String surName;
     @Nullable
     String lastName;
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "role_id")
     Roles roles;
+    @NotNull
     @OneToOne
     @JoinColumn(name = "profile_id")
     Profile profile;
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany
+    @JoinTable(name = "user_order",joinColumns = @JoinColumn(name = "users_id"), inverseJoinColumns = @JoinColumn(name = "orders_id"))
     List<Orders> orders;
 
     public Users(){}
@@ -76,19 +79,19 @@ public class Users {
         this.lastName = lastName;
     }
 
-    public Roles getRoles() {
+    public @NotNull Roles getRoles() {
         return roles;
     }
 
-    public void setRoles(Roles roles) {
+    public void setRoles(@NotNull Roles roles) {
         this.roles = roles;
     }
 
-    public Profile getProfile() {
+    public @NotNull Profile getProfile() {
         return profile;
     }
 
-    public void setProfile(Profile profile) {
+    public void setProfile(@NotNull Profile profile) {
         this.profile = profile;
     }
 

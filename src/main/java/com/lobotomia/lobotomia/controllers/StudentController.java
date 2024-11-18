@@ -1,9 +1,7 @@
 package com.lobotomia.lobotomia.controllers;
 
 import com.lobotomia.lobotomia.Model.Student;
-import com.lobotomia.lobotomia.Model.Users;
 import com.lobotomia.lobotomia.Service.StudentService;
-import com.lobotomia.lobotomia.Service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

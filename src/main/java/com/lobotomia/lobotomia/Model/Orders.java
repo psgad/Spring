@@ -14,11 +14,11 @@ public class Orders {
     UUID id;
     @NotEmpty
     String title;
-    @Min(500)
+    @Min(value = 500, message = "Цена должна начинаться от 500 рубликов")
     Integer price;
 
     @ManyToMany
-    @JoinTable(name = "user_order",joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))
+    @JoinTable(name = "user_order",joinColumns = @JoinColumn(name = "orders_id"), inverseJoinColumns = @JoinColumn(name = "users_id"))
     List<Users> users;
 
     public Orders() {}

@@ -2,6 +2,8 @@ package com.lobotomia.lobotomia.controllers;
 
 import com.lobotomia.lobotomia.Model.Pagination;
 import com.lobotomia.lobotomia.Model.Users;
+import com.lobotomia.lobotomia.Service.ProfileService;
+import com.lobotomia.lobotomia.Service.RolesService;
 import com.lobotomia.lobotomia.Service.UserService;
 import jakarta.validation.Valid;
 import org.apache.catalina.User;
@@ -21,6 +23,10 @@ import java.util.stream.Collectors;
 public class MainController {
     @Autowired
     public UserService userService;
+    @Autowired
+    public RolesService rolesService;
+    @Autowired
+    public ProfileService profileService;
 
 
     @GetMapping("/all")
@@ -30,10 +36,12 @@ public class MainController {
                        @RequestParam(name = "surname", required = false) String surname,
                        @RequestParam(name = "lastname", required = false) String lastname,
                        @RequestParam(name = "role", required = false) String role) {
-        List<Users> users = userService.findAll();
-        System.out.println("количество пользователей: " + users.size());
+        Pagination<Users> users = userService.findAll(page);
+        System.out.println("количество пользователей: " + users.getCurrentItems().size());
         model.addAttribute("pagination_users", users);
         model.addAttribute("user", new Users());
+        model.addAttribute("roles", rolesService.findAll());
+        model.addAttribute("profiles", profileService.findAll());
 
         return "users";
 

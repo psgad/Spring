@@ -13,7 +13,7 @@ import java.util.UUID;
 @Table(name="student")
 public class Student {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     UUID id;
     @NotEmpty
     @Size(min = 2, max = 50, message = "Длина должна быть от 2 до 10 символов")

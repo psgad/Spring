@@ -6,10 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
-public class RolesService extends BaseService<Roles, Long> {
+public class RolesService extends BaseService<Roles, UUID> {
     @Autowired
-    public RolesService(JpaRepository<Roles, Long> repository) {
+    public RolesService(JpaRepository<Roles, UUID> repository) {
         super(repository);
     }
+
 }

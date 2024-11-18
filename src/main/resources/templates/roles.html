@@ -86,25 +86,15 @@
             <tr>
                 <th></th>
                 <th>ID</th>
-                <th>Имя</th>
-                <th>Фамилия</th>
-                <th>Отчество</th>
-                <th>Роль</th>
-                <th>Используемый логин</th>
+                <th>Название роли</th>
             </tr>
             </thead>
             <tbody>
-            <th:block th:each="user: ${pagination_users}">
-                <tr th:data-id="${user.getId()}" th:data-firstname="${user.getFirstName()}"
-                    th:data-surname="${user.getSurName()}" th:data-lastname="${user.getLastName()}"
-                    th:data-role="${user.getRoles().getTitle()}" th:data-profile="${user.getProfile().getLogin()}">
+            <th:block th:each="roles: ${rolesList}">
+                <tr th:data-id="${roles.getId()}" th:data-title="${roles.getTitle()}">
                     <td><input type="checkbox" class="selectRow"/></td>
-                    <td th:text="${user.getId()}"></td>
-                    <td th:text="${user.getFirstName()}"></td>
-                    <td th:text="${user.getSurName()}"></td>
-                    <td th:text="${user.getLastName()}"></td>
-                    <td th:text="${user.getRoles().getTitle()}"></td>
-                    <td th:text="${user.getProfile().getLogin()}"></td>
+                    <td th:text="${roles.getId()}"></td>
+                    <td th:text="${roles.getTitle()}"></td>
                 </tr>
             </th:block>
             </tbody>
@@ -123,20 +113,8 @@
         <header>
             <h2>Создание пользователя</h2>
         </header>
-        <form class="createUser form-inline" method="POST" action="/users/add" id="userForm" th:object="${user}">
-            <input placeholder="Имя" id="firstname" th:field="*{firstName}" required>
-            <input placeholder="Фамилия" id="surname" th:field="*{surName}" required>
-            <input placeholder="Отчество" required th:field="*{lastName}">
-            <label for="category">Роль</label>
-            <select class="form-control" id="category" name="roles.id" required>
-                <option th:each="role : ${roles}" th:value="${role.getId()}"
-                        th:text="${role.getTitle()}"></option>
-            </select>
-            <label for="profile">Роль</label>
-            <select class="form-control" id="profile" name="profile.id" required>
-                <option th:each="profile : ${profiles}" th:value="${profile.getId()}"
-                        th:text="${profile.getLogin()}"></option>
-            </select>
+        <form class="createUser form-inline" method="POST" action="/roles/add" id="userForm" th:object="${role}">
+            <input placeholder="Название роли" id="firstname" th:field="*{title}" required>
             <button type="submit" formmethod="post">Создать</button>
         </form>
     </div>
@@ -145,37 +123,16 @@
         <header>
             <h2>Обновление пользователя</h2>
         </header>
-        <form class="updateUser form-inline" method="POST" action="/users/update" id="updateUserForm"
-              th:object="${user}">
+        <form class="updateUser form-inline" method="POST" action="/roles/update" id="updateUserForm"
+              th:object="${role}">
             <input type="hidden" name="id" id="updateUserId" th:field="*{id}"/>
-            <input placeholder="Имя" id="updateFirstname" th:field="*{firstName}" required>
-            <input placeholder="Фамилия" id="updateSurname" th:field="*{surName}" required>
-            <input placeholder="Отчество" required th:field="*{lastName}" id="updateLastname">
-            <label for="updateRole">Роль</label>
-            <select class="form-control" id="updateRole" name="roles.id" required>
-                <option th:each="role : ${roles}" th:value="${role.getId()}"
-                        th:text="${role.getTitle()}"></option>
-            </select>
-            <label for="updateProfile">Роль</label>
-            <select class="form-control" id="updateProfile" name="profile.id" required>
-                <option th:each="profile : ${profiles}" th:value="${profile.getId()}"
-                        th:text="${profile.getLogin()}"></option>
-            </select>
+            <input placeholder="Имя" th:field="*{title}" required id="updateFirstname">
             <button type="submit" formmethod="post">Обновить</button>
         </form>
     </div>
 </div>
 
 <script>
-    function selectElement(id, data) {
-        let select = document.getElementById(id);
-        for(var a = 0; a < select.length; a++){
-            if(select.options[a].text == data){
-                select.value = select.options[a].value;
-            }
-        }
-
-    }
     document.querySelector('#selectAll').addEventListener('change', function() {
         document.querySelectorAll('.selectRow').forEach(checkbox => checkbox.checked = this.checked);
     });
@@ -184,12 +141,7 @@
         row.addEventListener('click', function() {
             // Для обновления
             document.getElementById('updateUserId').value = this.getAttribute('data-id');
-            document.getElementById('updateFirstname').value = this.getAttribute('data-firstname');
-            document.getElementById('updateSurname').value = this.getAttribute('data-surname');
-            document.getElementById('updateLastname').value = this.getAttribute('data-lastname');
-
-            selectElement('updateRole', this.getAttribute('data-role'));
-            selectElement('updateProfile', this.getAttribute('data-profile'));
+            document.getElementById('updateFirstname').value = this.getAttribute('data-title');
         });
     });
     document.getElementById('delete').addEventListener('click', function() {
@@ -201,7 +153,7 @@
         return;
     }
 
-    fetch('/users/delete', {
+    fetch('/roles/delete', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
