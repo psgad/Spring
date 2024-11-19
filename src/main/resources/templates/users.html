@@ -97,7 +97,7 @@
             <th:block th:each="user: ${pagination_users}">
                 <tr th:data-id="${user.id}" th:data-firstname="${user.getFirstName()}"
                     th:data-surname="${user.getSurName()}" th:data-lastname="${user.getLastName()}"
-                    th:data-role="${user.getRoles().getTitle()}" th:data-profile="${user.getProfile().getLogin()}"
+                    th:data-role="${user.getRoles().getTitle()}" th:data-profile="${user.getProfile().getUsername()}"
                     th:data-order-list="${doing}">
                     <td><input type="checkbox" class="selectRow"/></td>
                     <td th:text="${user.getId()}"></td>
@@ -105,7 +105,7 @@
                     <td th:text="${user.getSurName()}"></td>
                     <td th:text="${user.getLastName()}"></td>
                     <td th:text="${user.getRoles().getTitle()}"></td>
-                    <td th:text="${user.getProfile().getLogin()}"></td>
+                    <td th:text="${user.getProfile().getUsername()}"></td>
                 </tr>
             </th:block>
             </tbody>
@@ -136,7 +136,7 @@
             <label for="profile">Логин</label>
             <select class="form-control" id="profile" name="profile.id" required>
                 <option th:each="profile : ${profiles}" th:value="${profile.getId()}"
-                        th:text="${profile.getLogin()}"></option>
+                        th:text="${profile.getUsername()}"></option>
             </select>
             <button type="submit" formmethod="post">Создать</button>
         </form>
@@ -160,7 +160,7 @@
             <label for="updateProfile">Логин</label>
             <select class="form-control" id="updateProfile" name="profile.id" required>
                 <option th:each="profile : ${profiles}" th:value="${profile.getId()}"
-                        th:text="${profile.getLogin()}"></option>
+                        th:text="${profile.getUsername()}"></option>
             </select>
             <button type="submit" formmethod="post">Обновить</button>
         </form>
