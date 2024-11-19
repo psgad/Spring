@@ -16,15 +16,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Controller
-public class BaseController<T, ID> {
+public abstract class BaseController<T, ID> {
     @Autowired
     public final BaseService<T, ID> baseService;
-    public String title_list, title_model;
+    public final String title_list;
+    public final String title_model;
     public Class<T> cls;
 
-    protected BaseController(BaseService<T, ID> baseService) {
+    protected BaseController(BaseService<T, ID> baseService, Class<T> cls, String title_list, String title_model) {
         this.baseService = baseService;
+        this.cls = cls;
+        this.title_list = title_list;
+        this.title_model = title_model;
     }
 
 

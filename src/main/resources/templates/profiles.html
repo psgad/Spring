@@ -91,13 +91,13 @@
             </tr>
             </thead>
             <tbody>
-            <th:block th:each="profilse: ${profilesList}">
-                <tr th:data-id="${profilse.getId()}" th:data-login="${profilse.getLogin()}"
-                    th:data-password="${profilse.getPassword()}">
+            <th:block th:each="Profile: ${profilesList}">
+                <tr th:data-id="${Profile.getId()}" th:data-login="${Profile.getLogin()}"
+                    th:data-password="${Profile.getPassword()}">
                     <td><input type="checkbox" class="selectRow"/></td>
-                    <td th:text="${profilse.getId()}"></td>
-                    <td th:text="${profilse.getLogin()}"></td>
-                    <td th:text="${profilse.getPassword()}"></td>
+                    <td th:text="${Profile.getId()}"></td>
+                    <td th:text="${Profile.getLogin()}"></td>
+                    <td th:text="${Profile.getPassword()}"></td>
                 </tr>
             </th:block>
             </tbody>

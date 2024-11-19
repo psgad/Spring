@@ -29,8 +29,8 @@ public class ProfileController {
                               @RequestParam(name = "page", required = false, defaultValue = "1") int page,
                               @RequestParam(name = "login", required = false) String login,
                               @RequestParam(name = "password", required = false) String password) {
-        Pagination<Profile> roles = profileService.findAll(page);
-        System.out.println("количество профилей: " + roles.getCurrentItems().size());
+        List<Profile> roles = profileService.findAll();
+        System.out.println("количество профилей: " + roles.size());
         model.addAttribute("profilesList", roles);
         model.addAttribute("profile", new Profile());
         return "profiles";
