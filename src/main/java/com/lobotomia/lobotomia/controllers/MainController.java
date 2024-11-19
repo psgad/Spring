@@ -24,12 +24,12 @@ public class MainController {
 
     @GetMapping("/all")
     public String getAllUsers(Model model,
-                       @RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                       @RequestParam(name = "firstname", required = false) String firstName,
-                       @RequestParam(name = "surname", required = false) String surname,
-                       @RequestParam(name = "lastname", required = false) String lastname,
-                       @RequestParam(name = "role", required = false) String role) {
-        List<Users> users = userService.findAllUsers();
+                              @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                              @RequestParam(name = "firstname", required = false) String firstName,
+                              @RequestParam(name = "surname", required = false) String surname,
+                              @RequestParam(name = "lastname", required = false) String lastname,
+                              @RequestParam(name = "role", required = false) String role) {
+        List<Users> users = userService.findAll();
         System.out.println("количество пользователей: " + users.size());
         model.addAttribute("pagination_users", users);
         model.addAttribute("user", new Users());
@@ -41,12 +41,12 @@ public class MainController {
     @PostMapping("/add")
     public String addUser(@Valid @ModelAttribute("users") Users user, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            List<Users> users = userService.findAllUsers();
+            List<Users> users = userService.findAll();
             model.addAttribute("pagination_users", users);
-            model.addAttribute("users", userService.findAllUsers());
+            model.addAttribute("users", users);
             return "users";
         }
-        userService.addUser(user);
+        userService.add(user);
         return "redirect:/users/all";
 
 
@@ -54,22 +54,23 @@ public class MainController {
 
     @PostMapping("/update")
     public String updateUser(@Valid @ModelAttribute("users") Users user, BindingResult result) {
-        userService.editUser(user);
+        userService.edit(user.getId(), user);
         return "redirect:/users/all";
 
     }
 
     @PostMapping("/delete")
     public String deleteUser(@RequestBody ArrayList<Long> ids) {
-        for(Long id : ids) {
-            userService.deleteUser(id);
+        for (Long id : ids) {
+            userService.delete(id);
         }
         return "redirect:/users/all";
 
     }
+
     @GetMapping("/all/{id}")
     public String getIdStudent(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("users", userService.findUserById(id));
+        model.addAttribute("users", userService.findById(id));
         model.addAttribute("user", new Users());
         return "users";
     }
