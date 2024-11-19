@@ -1,68 +1,116 @@
 package com.lobotomia.lobotomia.controllers;
 
+import com.lobotomia.lobotomia.Model.Orders;
+import com.lobotomia.lobotomia.Model.Pagination;
+import com.lobotomia.lobotomia.Model.Users;
+import com.lobotomia.lobotomia.Service.OrderService;
+import com.lobotomia.lobotomia.Service.ProfileService;
+import com.lobotomia.lobotomia.Service.RolesService;
+import com.lobotomia.lobotomia.Service.UserService;
+import jakarta.validation.Valid;
+import org.apache.catalina.User;
+import org.aspectj.weaver.ast.Or;
+import org.hibernate.query.Order;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller
+@RequestMapping("/users")
 public class MainController {
-    @GetMapping("/")
-    public String home(Model model) {
-        model.addAttribute("name", "psgad");
-        return "homePage";
+    @Autowired
+    public UserService userService;
+    @Autowired
+    public RolesService rolesService;
+    @Autowired
+    public ProfileService profileService;
+    @Autowired
+    public OrderService orderService;
+
+
+    @GetMapping("/all")
+    public String getAllUsers(Model model) {
+        List<Users> users = userService.findAll();
+        System.out.println("количество пользователей: " + users.size());
+        model.addAttribute("pagination_users", users);
+        model.addAttribute("user", new Users());
+        model.addAttribute("roles", rolesService.findAll());
+        model.addAttribute("profiles", profileService.findAll());
+        model.addAttribute("ordersList", orderService.findAll());
+        model.addAttribute("user_orders_list", null);
+        model.addAttribute("doing", false);
+
+        return "users";
+
     }
 
-    @PostMapping("calculate")
-    public String calculate(@RequestParam("operand1") double operand1,
-                            @RequestParam("operand2") double operand2,
-                            @RequestParam("operator") String operator,
-                            Model model) {
-        double result = switch (operator) {
-            case "+" -> operand1 + operand2;
-            case "-" -> operand1 - operand2;
-            case "/" -> operand1 / operand2;
-            case "*" -> operand1 * operand2;
-            default -> 0.0;
-        };
-        model.addAttribute("result", result);
-        return "result";
-    }
-
-    @GetMapping("/calculator")
-    public String calculator() {
-        return "calculator";
-    }
-
-    @GetMapping("/currency-converter")
-    public String convertCurrency() {
-        return "converter";
-    }
-
-    @PostMapping("/convert")
-    public String convert(@RequestParam("count") double count,
-                          @RequestParam("from-convert") String from_convert,
-                          @RequestParam("to_convert") String to_convert,
-                          Model model) {
-        double result = count;
-        if (from_convert.equals("RUB")) {
-            if (to_convert.equals("EUR")) result = count * 0.009356;
-            else if (to_convert.equals("USD")) result = count * 0.010198;
-        } else if (from_convert.equals("USD")) {
-            if (to_convert.equals("RUB")) result = count * 98.06;
-            else if (to_convert.equals("EUR")) result = count * 0.93568;
-        } else if (from_convert.equals("EUR")) {
-            if (to_convert.equals("USD")) result = count * 1.07;
-            else if (to_convert.equals("USD")) result = count * 106.89;
+    @PostMapping("/add")
+    public String addUser(@Valid @ModelAttribute("users") Users user, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            List<Users> users = userService.findAll();
+            model.addAttribute("pagination_users", users);
+            model.addAttribute("users", userService.findAll());
+            return "users";
         }
-        model.addAttribute("result", result);
-        return "result";
+        userService.add(user);
+        return "redirect:/users/all";
+
+
     }
+
+    @PostMapping("/update")
+    public String updateUser(@Valid @ModelAttribute("users") Users user, BindingResult result) {
+        userService.edit(user.getId(), user);
+        return "redirect:/users/all";
+
+    }
+
+    @PostMapping("/delete")
+    public String deleteUser(@RequestBody ArrayList<UUID> ids) {
+        for (UUID id : ids) {
+            userService.delete(id);
+        }
+        return "redirect:/users/all";
+
+    }
+
+    @GetMapping("/all/{id}")
+    public String getIdStudent(@PathVariable("id") UUID id, Model model) {
+        List<Users> users = userService.findAll();
+        List<Orders> orders = userService.findById(id).getOrders() == null ? new ArrayList<>() : userService.findById(id).getOrders();
+        System.out.println("количество заказов: " + orders.size());
+        model.addAttribute("pagination_users", users);
+        model.addAttribute("user", new Users());
+        model.addAttribute("roles", rolesService.findAll());
+        model.addAttribute("profiles", profileService.findAll());
+        model.addAttribute("ordersList", orderService.findAll());
+        model.addAttribute("user_orders_list", orders);
+        model.addAttribute("doing", true);
+        model.addAttribute("user_id", id);
+        model.addAttribute("user_name", userService.findById(id).getFirstName());
+        return "users";
+    }
+
+    @PostMapping("/all/{id}/add_order")
+    public String createOrder(@RequestParam("order_id") UUID order_id,
+                              @RequestParam("user_id") UUID userId,
+                              @PathVariable("id") UUID id,
+                              Model model) {
+        Users user = userService.findById(userId);
+        List<Orders> orders_user = user.getOrders();
+        orders_user.add(orderService.findById(order_id));
+        user.setOrders(orders_user);
+        userService.edit(user.getId(), user);
+        return "redirect:/users/all/{id}";
+    }
+
+
 }
 
