@@ -87,12 +87,12 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(authorize -> authorize
-                        .requestMatchers("/login", "/reg").permitAll() // Открытые страницы
-                        .requestMatchers("/users/**").hasAuthority("ADMIN") // Админ доступ
+                        .requestMatchers("/login", "/reg", "/api/**", "/students/**").permitAll()
+                        .requestMatchers("/users/**").hasAuthority("ADMIN")
                         .requestMatchers("/profiles/**").hasAuthority("SYSADMIN")
                         .requestMatchers("/roles/**").hasAuthority("MANAGERROLES")
-                        .requestMatchers("/orders/**").hasAuthority("USER") // Пользовательский доступ
-                        .anyRequest().authenticated() // Все остальные запросы требуют аутентификации
+                        .requestMatchers("/orders/**").hasAuthority("USER")
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form ->
                         form

@@ -37,7 +37,7 @@ public abstract class BaseService<T, ID> {
 
     public T edit(ID id, T entity) {
         if (repository.existsById(id)) {
-            repository.save(entity);
+            return repository.save(entity);
         }
         return null;
     }
