@@ -1,5 +1,7 @@
 package com.lobotomia.lobotomia.Model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -27,6 +29,7 @@ public class Profile {
     @Enumerated(EnumType.STRING)
     Set<RoleEnum> roles;
 
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @OneToOne(mappedBy = "profile")
     Users users;
 

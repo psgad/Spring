@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Поставщики</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+        }
+        header, .content {
+            margin: 20px;
+            padding: 20px;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+        }
+        a, button {
+            color: #ffffff;
+            background-color: #3b3b3b;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        input, select, p {
+            margin: 5px 0;
+            padding: 8px;
+            border: 1px solid #555;
+            background-color: #2b2b2b;
+            color: #e0e0e0;
+            border-radius: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #555;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #3b3b3b;
+        }
+        tr:hover {
+            background-color: #2e2e2e;
+            cursor: pointer;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .form-inline {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-inline input {
+            width: 150px;
+        }
+        .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    padding: 20px 0;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    margin-top: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.pagination-button {
+    padding: 10px 20px;
+    background-color: #2b2b2b;
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    display: inline-block;
+}
+
+.pagination-button:hover {
+    background-color: #555;
+    color: #ffffff;
+}
+
+.pagination-button.prev::before {
+    content: '← ';
+}
+
+.pagination-button.next::after {
+    content: ' →';
+}
+
+.pagination-info {
+    color: #e0e0e0;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+    </style>
+</head>
+<body>
+<header>
+    <a href="/logout">Выйти</a>
+    <a href="/carsList/all">Список машин</a>
+    <a href="/providersList/all">Список поставщиков</a>
+</header>
+<div class="body">
+    <div class="content">
+        <header>
+            <h2>Список Услуг</h2>
+            <input type="checkbox" id="selectAll"/> Выбрать все
+            <button id="delete">Удалить</button>
+        </header>
+        <table>
+            <thead>
+            <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Название Услуги</th>
+                <th>Описание</th>
+                <th>Цена</th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="service: ${servicesList.getCurrentItems()}">
+                <tr th:data-id="${service.getId()}"
+                    th:data-title="${service.getTitle()}"
+                    th:data-price="${service.getPrice()}"
+                    th:data-description="${service.getDescription()}">
+                    <td><input type="checkbox" class="selectRow"/></td>
+                    <td th:text="${service.getId()}"></td>
+                    <td th:text="${service.getTitle()}"></td>
+                    <td th:text="${service.getDescription()}"></td>
+                    <td th:text="${service.getPrice()}"></td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+        <div class="pagination">
+            <th:block th:if="${servicesList.getCurrentPage() > 1}">
+                <a th:href="@{/servicesList/all?(page=${servicesList.getCurrentPage() - 1})}" class="pagination-button prev">
+                    Предыдущая
+                </a>
+            </th:block>
+            <p class="pagination-info">
+                Страница <span th:text="${servicesList.getCurrentPage()}"></span> из <span th:text="${servicesList.getTotalNumberPages()}"></span>
+            </p>
+            <th:block th:if="${servicesList.getCurrentPage() < servicesList.getTotalNumberPages()}">
+                <a th:href="@{/servicesList/all?(page=${servicesList.getCurrentPage() + 1})}" class="pagination-button next">
+                    Следующая
+                </a>
+            </th:block>
+        </div>
+    </div>
+    <div class="content">
+        <header>
+            <h2>Добавление услуги</h2>
+        </header>
+        <form class="createUser form-inline" method="POST" action="/servicesList/add" id="userForm"
+              th:object="${service}">
+            <input placeholder="Название услуги" id="firstname" th:field="*{title}" required>
+            <input placeholder="Описание" id="surname" type="text" th:field="*{description}" required>
+            <input placeholder="Цена" type="number" id="price" th:field="*{price}" required>
+            <button type="submit" formmethod="post">Создать</button>
+        </form>
+    </div>
+
+    <div class="content">
+        <header>
+            <h2>Обновление информации об услуге</h2>
+        </header>
+        <form class="updateUser form-inline" method="POST" action="/servicesList/update" id="updateUserForm"
+              th:object="${service}">
+            <input type="hidden" name="id" id="updateUserId" th:field="*{id}"/>
+            <input placeholder="Название услуги" th:field="*{title}" required id="updateFirstname">
+            <input placeholder="Описание" th:field="*{description}" required id="updateSurname">
+            <input placeholder="Цена" th:field="*{price}" required id="updatePrice">
+            <button type="submit" formmethod="post">Обновить</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function selectElement(id, data) {
+        let select = document.getElementById(id);
+        for(var a = 0; a < select.length; a++){
+            if(select.options[a].text == data){
+                select.value = select.options[a].value;
+            }
+        }
+
+    }
+    document.querySelector('#selectAll').addEventListener('change', function() {
+        document.querySelectorAll('.selectRow').forEach(checkbox => checkbox.checked = this.checked);
+    });
+
+    document.querySelectorAll('tbody tr').forEach(row => {
+        row.addEventListener('click', function() {
+            // Для обновления
+            document.getElementById('updateUserId').value = this.getAttribute('data-id');
+            document.getElementById('updateFirstname').value = this.getAttribute('data-title');
+            document.getElementById('updateSurname').value = this.getAttribute('data-description');
+            document.getElementById('updatePrice').value = this.getAttribute('data-price');
+        });
+    });
+    document.getElementById('delete').addEventListener('click', function() {
+    const selectedIds = Array.from(document.querySelectorAll('.selectRow:checked'))
+        .map(checkbox => checkbox.closest('tr').getAttribute('data-id'));
+
+    if (selectedIds.length === 0) {
+        alert('Выберите хотя бы одного пользователя для удаления.');
+        return;
+    }
+
+    fetch('/servicesList/delete', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(selectedIds)
+    })
+    .then(response => {
+        if (response.ok) {
+            window.location.reload();
+        }  else {
+            return response.json().then(error => {
+                alert(`Ошибка: ${error.message || 'Не удалось удалить пользователей'}`);
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при удалении пользователей.');
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -4,6 +4,7 @@ import com.lobotomia.lobotomia.Model.Pagination;
 import com.lobotomia.lobotomia.Model.Users;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,10 +24,10 @@ public abstract class BaseService<T, ID> {
     public Pagination<T> findAll(int page) {
         return new Pagination<T>(new ArrayList<>(repository.findAll()), page);
     }
+
     public List<T> findAll() {
         return repository.findAll(Sort.by("id"));
     }
-
     public T findById(ID id) {
         return repository.findById(id).orElse(null);
     }

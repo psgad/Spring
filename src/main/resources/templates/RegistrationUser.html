@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Авторизация</title>
+    <title>Регистрация контактных данных</title>
     <style>
         body {
             background-color: #121212;
@@ -57,55 +57,46 @@
             background-color: #5c5c5c;
         }
 
-        .auth-container .forgot-password {
-            display: block;
-            margin-top: 10px;
-            color: #8c8c8c;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .auth-container .forgot-password:hover {
-            color: #ffffff;
-        }
-
         .auth-container .error-message {
             color: #ff6b6b;
             font-size: 14px;
             margin-top: 10px;
         }
 
-        .auth-container .register {
+        .auth-container .login {
             margin-top: 20px;
             font-size: 14px;
             color: #8c8c8c;
         }
 
-        .auth-container .register a {
+        .auth-container .login a {
             color: #ffffff;
             text-decoration: none;
             font-weight: bold;
         }
 
-        .auth-container .register a:hover {
+        .auth-container .login a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
 <div class="auth-container">
-    <h2>Вход в систему</h2>
-    <form method="POST" th:action="@{/login}">
-        <input type="text" name="username" placeholder="Имя пользователя" required>
-        <input type="password" name="password" placeholder="Пароль" required>
-        <button type="submit">Войти</button>
+    <h2>Регистрация контактных данных</h2>
+    <form method="POST" th:action="@{/reg/user}" th:object="${user}">
+        <input type="text" th:field="*{firstname}" placeholder="Имя" required>
+        <input type="text" th:field="*{middleName}" placeholder="Фамилия" required>
+        <input type="text" th:field="*{lastname}" placeholder="Отчество">
+        <input type="date" th:field="*{date}" placeholder="Дата рождения" required>
+        <input type="tel" th:field="*{proneNumber}" placeholder="Номер телефона" required>
+
+        <button type="submit">Зарегистрироваться</button>
     </form>
-    <div class="error-message" th:if="${param.error}">
-        <p th:text="${error}"></p>
+
+    <div class="error-message" th:if="${message}">
+        <p th:text="${message}"></p>
     </div>
-    <div class="register">
-        Нет аккаунта? <a th:href="@{/reg/user}">Зарегистрироваться</a>
-    </div>
+
 </div>
 </body>
 </html>

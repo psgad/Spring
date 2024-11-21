@@ -1,14 +1,16 @@
 package com.lobotomia.lobotomia.Model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import org.hibernate.query.Order;
-import org.hibernate.validator.constraints.NotEmpty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "users")
@@ -16,32 +18,42 @@ public class Users {
     @Id
     @GeneratedValue
     UUID id;
-    @NotNull
-    String firstName;
-    @NotNull
-    String surName;
+
+    @NotEmpty
+    String middleName;
+
+    @NotEmpty
+    String firstname;
+
     @Nullable
-    String lastName;
+    String lastname;
+
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    Roles roles;
-    @NotNull
-    @OneToOne
-    @JoinColumn(name = "profile_id")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    Date Date;
+
+    @Nullable
+    String proneNumber;
+
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @OneToOne(fetch = FetchType.LAZY)
     Profile profile;
+
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @ManyToMany
-    @JoinTable(name = "user_order",joinColumns = @JoinColumn(name = "users_id"), inverseJoinColumns = @JoinColumn(name = "orders_id"))
-    List<Orders> orders;
+    @JoinTable(name = "user_order",joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))
+    List<OrderingCar> orders;
 
-    public Users(){}
+    public Users() {
+    }
 
-    public Users(UUID id, String firstName, String surName, @Nullable String lastName, Roles roles, Profile profile, List<Orders> orders) {
+    public Users(UUID id, String middleName, String firstname, @Nullable String lastname, java.util.Date date, @Nullable String proneNumber, Profile profile, List<OrderingCar> orders) {
         this.id = id;
-        this.firstName = firstName;
-        this.surName = surName;
-        this.lastName = lastName;
-        this.roles = roles;
+        this.middleName = middleName;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        Date = date;
+        this.proneNumber = proneNumber;
         this.profile = profile;
         this.orders = orders;
     }
@@ -54,52 +66,61 @@ public class Users {
         this.id = id;
     }
 
-    public @NotNull String getFirstName() {
-        return firstName;
+    public @NotEmpty String getMiddleName() {
+        return middleName;
     }
 
-    public void setFirstName(@NotNull String firstName) {
-        this.firstName = firstName;
+    public void setMiddleName(@NotEmpty String middleName) {
+        this.middleName = middleName;
     }
 
-    public @NotNull String getSurName() {
-        return surName;
+    public @NotEmpty String getFirstname() {
+        return firstname;
     }
 
-    public void setSurName(@NotNull String surName) {
-        this.surName = surName;
+    public void setFirstname(@NotEmpty String firstname) {
+        this.firstname = firstname;
     }
 
     @Nullable
-    public String getLastName() {
-        return lastName;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setLastName(@Nullable String lastName) {
-        this.lastName = lastName;
+    public void setLastname(@Nullable String lastname) {
+        this.lastname = lastname;
     }
 
-    public @NotNull Roles getRoles() {
-        return roles;
+    public java.util.@NotNull Date getDate() {
+        return Date;
     }
 
-    public void setRoles(@NotNull Roles roles) {
-        this.roles = roles;
+    public void setDate(java.util.@NotNull Date date) {
+        Date = date;
     }
 
-    public @NotNull Profile getProfile() {
+    @Nullable
+    public String getProneNumber() {
+        return proneNumber;
+    }
+
+    public void setProneNumber(@Nullable String proneNumber) {
+        this.proneNumber = proneNumber;
+    }
+
+    public Profile getProfile() {
         return profile;
     }
 
-    public void setProfile(@NotNull Profile profile) {
+    public void setProfile(Profile profile) {
         this.profile = profile;
     }
 
-    public List<Orders> getOrders() {
+    public List<OrderingCar> getOrders() {
         return orders;
     }
 
-    public void setOrders(List<Orders> orders) {
+    public void setOrders(List<OrderingCar> orders) {
         this.orders = orders;
     }
 }

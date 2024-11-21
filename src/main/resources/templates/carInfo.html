@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Информация о Машине</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #1e1e1e;
+            padding: 15px;
+            text-align: right;
+        }
+
+        .header a {
+            color: #ffffff;
+            background-color: #3b3b3b;
+            padding: 8px 12px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .content {
+            margin: 20px;
+            padding: 20px;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+        }
+
+        .car-info {
+            margin-bottom: 20px;
+            padding: 25px;
+            background-color: #2b2b2b;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .car-info p {
+            margin: 12px 0;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .car-info strong {
+            color: #ff6f61;
+        }
+
+        .form-inline {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        input,
+        textarea {
+            padding: 12px;
+            border: 1px solid #555;
+            background-color: #2b2b2b;
+            color: #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        button {
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+
+        .edit-button {
+            background-color: #3b3b3b;
+        }
+
+        .delete-button {
+            background-color: #b71c1c;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #e0e0e0;
+        }
+
+        .form-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px;
+            border: 1px solid #555;
+            background-color: #2b2b2b;
+            color: #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        textarea.form-input {
+            height: 150px;
+            resize: true;
+        }
+
+        .edit-button {
+            background-color: #3b3b3b;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+            display: block;
+            margin-top: 20px;
+        }
+
+        .edit-button:hover {
+            background-color: #555;
+        }
+
+        .car-info-header {
+            font-size: 1.8rem;
+            color: #ff6f61;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .car-info p span {
+            font-weight: normal;
+            color: #e0e0e0;
+        }
+
+        .car-info-footer {
+            margin-top: 15px;
+            text-align: center;
+        }
+        select {
+            padding: 12px;
+            border: 1px solid #555;
+            background-color: #2b2b2b;
+            color: #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 500px;
+            appearance: none; /* Убирает стрелку в некоторых браузерах */
+            background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 6"><path fill="%23e0e0e0" d="M0 0h10L5 6z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 10px;
+        }
+
+        select:focus {
+            border-color: #ff6f61;
+            outline: none;
+        }
+
+        option {
+            background-color: #2b2b2b;
+            color: #e0e0e0;
+        }
+        .services-container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .services-list {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .services-column {
+            flex: 1;
+            text-align: center;
+        }
+
+        .services-column h4 {
+            margin-bottom: 10px;
+            color: #ff6f61;
+        }
+
+        .services {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            min-height: 150px;
+            background-color: #2b2b2b;
+            border: 2px dashed #555;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .services li {
+            padding: 10px;
+            background-color: #3b3b3b;
+            color: #e0e0e0;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            cursor: grab;
+            text-align: center;
+        }
+
+        .services li:hover {
+            background-color: #555;
+        }
+
+        .services li:active {
+            cursor: grabbing;
+        }
+
+        button.edit-button {
+            display: block;
+            margin: 20px auto 0;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="header">
+    <a href="/logout">Выход</a>
+    <a href="/carsList/all">Назад к машинам</a>
+</div>
+
+<div class="content">
+    <header>
+        <h2 th:if="${carInfo != null}" class="car-info-header">Информация о машине</h2>
+        <h2 th:if="${carInfo == null && !manager}">Информации о машине пока нет</h2>
+        <h2 th:if="${carInfo == null && manager}">Так как информации о машине нет, ее надо добавить</h2>
+    </header>
+
+    <div class="car-info" th:if="${carInfo != null}">
+        <p th:if="${manager}"><strong>ID:</strong> <span th:text="${carInfo.getId()}"></span></p>
+        <p><strong>Описание:</strong> <span th:text="${carInfo.getDescription()}"
+                                            th:data-id="${car_id}"
+                                            id="data_id"></span></p>
+        <p><strong>Дата создания:</strong> <span
+                th:text="${#dates.format(carInfo.getDateCreation(), 'dd-MM-yyyy')}"></span></p>
+        <p><strong>Марка:</strong> <span th:text="${carInfo.getMarka()}"></span></p>
+        <p><strong>Модель:</strong> <span th:text="${carInfo.getModel()}"></span></p>
+        <p><strong>Цвет:</strong> <span th:text="${carInfo.getColor()}"></span></p>
+        <p><strong>Пробег:</strong> <span th:text="${carInfo.getProbeg()}"></span></p>
+        <p><strong>Тип трансмиссии:</strong> <span th:text="${carInfo.getTypeTransmission()}"></span></p>
+        <p><strong>Поставщик:</strong> <span th:text="${carInfo.getProvider().getTitle()}" id="provider_data"
+                                             th:data-provider="${carInfo.getProvider().getTitle()}"></span></p>
+
+        <form method="POST" th:action="@{/carsInfo/delete/{id}(id=${carInfo.id})}" th:if="${manager}">
+            <button type="submit" class="delete-button">Удалить информацию о машине</button>
+        </form>
+    </div>
+
+    <div class="form-inline" th:if="${manager && carInfo != null}">
+        <form method="POST" th:action="@{/carsInfo/update}" th:object="${carInfo}">
+            <ul style="list-style-type: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 15px;">
+                <li>
+                    <input th:field="*{id}" class="form-input" type="hidden">
+                </li>
+                <li>
+                    <label for="description" class="form-label">Описание машины:</label>
+                    <textarea th:field="*{description}" id="descriptionUpdate" placeholder="Введите описание"
+                              class="form-input" rows="4"></textarea>
+                </li>
+                <li>
+                    <label for="marka" class="form-label">Марка:</label>
+                    <input type="text" th:field="*{marka}" id="markaUpdate" placeholder="Марка" class="form-input"
+                           required/>
+                </li>
+                <li>
+                    <label for="model" class="form-label">Модель:</label>
+                    <input type="text" th:field="*{model}" id="modeUpdatel" placeholder="Модель" class="form-input"
+                           required/>
+                </li>
+                <li>
+                    <label for="color" class="form-label">Цвет:</label>
+                    <input type="text" th:field="*{color}" id="colorUpdate" placeholder="Цвет" class="form-input"
+                           required/>
+                </li>
+                <li>
+                    <label for="probeg" class="form-label">Пробег:</label>
+                    <input type="number" th:field="*{probeg}" id="probegUpdate" placeholder="Пробег" class="form-input"
+                           required/>
+                </li>
+                <li>
+                    <label for="typeTransmission" class="form-label">Тип трансмиссии:</label>
+                    <input type="text" th:field="*{typeTransmission}" id="typeTransmissionUpdate"
+                           placeholder="Тип трансмиссии" class="form-input" required/>
+                </li>
+                <li>
+                    <label for="provider_id">Поставщик:</label>
+                    <select class="form-control" id="provider_id" name="provider" required>
+                        <option th:each="provider : ${providers}" th:value="${provider.getId()}"
+                                th:text="${provider.getTitle()}"></option>
+                    </select>
+                </li>
+            </ul>
+            <button type="submit" class="edit-button">Обновить</button>
+        </form>
+    </div>
+
+    <div class="form-inline" th:if="${manager && carInfo == null}">
+        <form method="POST" th:action="@{'/carsInfo/add/' + ${car_id}}" th:object="${newCarInfo}">
+            <ul style="list-style-type: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 15px;">
+                <li>
+                    <label for="description" class="form-label">Описание машины:</label>
+                    <textarea th:field="*{description}" id="description" placeholder="Введите описание"
+                              class="form-input" rows="4"></textarea>
+                </li>
+                <li>
+                    <label for="marka" class="form-label">Марка:</label>
+                    <input type="text" th:field="*{marka}" id="marka" placeholder="Марка" class="form-input" required/>
+                </li>
+                <li>
+                    <label for="model" class="form-label">Модель:</label>
+                    <input type="text" th:field="*{model}" id="model" placeholder="Модель" class="form-input" required/>
+                </li>
+                <li>
+                    <label for="color" class="form-label">Цвет:</label>
+                    <input type="text" th:field="*{color}" id="color" placeholder="Цвет" class="form-input" required/>
+                </li>
+                <li>
+                    <label for="probeg" class="form-label">Пробег:</label>
+                    <input type="number" th:field="*{probeg}" id="probeg" placeholder="Пробег" class="form-input"
+                           required/>
+                </li>
+                <li>
+                    <label for="typeTransmission" class="form-label">Тип трансмиссии:</label>
+                    <input type="text" th:field="*{typeTransmission}" id="typeTransmission"
+                           placeholder="Тип трансмиссии" class="form-input" required/>
+                </li>
+                <li>
+                    <label for="provider_idCreate">Поставщик:</label>
+                    <select class="form-control" id="provider_idCreate" name="provider" required>
+                        <option th:each="provider : ${providers}" th:value="${provider.getId()}"
+                                th:text="${provider.getTitle()}"></option>
+                    </select>
+                </li>
+            </ul>
+            <button type="submit" class="edit-button">Добавить</button>
+        </form>
+    </div>
+</div>
+<div class="content" th:if="${!manager}">
+    <div class="services-container">
+        <h3>Выберите услуги</h3>
+        <div class="services-list">
+            <div id="available-services" class="services-column">
+                <h4>Доступные услуги</h4>
+                <ul id="available" class="services" ondragover="allowDrop(event)" ondrop="drop(event)">
+                    <li th:each="service : ${services}" draggable="true" ondragstart="drag(event)"
+                        th:id="'service-' + ${service.id}"
+                        th:data-id="${service.id}" th:text="${service.title}"></li>
+                </ul>
+            </div>
+            <div id="selected-services" class="services-column">
+                <h4>Выбранные услуги</h4>
+                <ul id="selected" class="services" ondragover="allowDrop(event)" ondrop="drop(event)">
+                </ul>
+            </div>
+        </div>
+        <button type="button" class="edit-button" onclick="submitOrder()">Оформить заказ</button>
+    </div>
+</div>
+<script>
+    function selectElement(id, data) {
+        let select = document.getElementById(id);
+        for (let i = 0; i < select.options.length; i++) {
+            if (select.options[i].text === data) {
+                select.value = select.options[i].value;
+                break; // Найдено, прерываем цикл
+            }
+        }
+    }
+    selectElement("provider_id", document.getElementById("provider_data").getAttribute('data-provider'))
+    function allowDrop(event) {
+        event.preventDefault();
+    }
+
+    function drag(event) {
+        event.dataTransfer.setData("text", event.target.id);
+    }
+
+    function drop(event) {
+        event.preventDefault();
+        const id = event.dataTransfer.getData("text");
+        const item = document.getElementById(id);
+
+        // Проверяем, что элемент не добавлен дважды
+        if (!event.target.closest('.services').contains(item)) {
+            event.target.appendChild(item);
+        }
+    }
+    function submitOrder() {
+        const selectedList = document.getElementById('selected');
+        const selectedServices = Array.from(selectedList.children).map(service => service.dataset.id);
+
+        if (selectedServices.length === 0) {
+            alert("Выберите хотя бы одну услугу!");
+            return;
+        }
+        carId = document.getElementById('data_id').getAttribute('data-id')
+        fetch(`/carsList/${carId}/add_order`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(selectedServices)
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Заказ успешно оформлен!");
+                location.reload();
+            } else {
+                alert("Ошибка при оформлении заказа.");
+            }
+        })
+        .catch(error => console.error("Ошибка:", error));
+    }
+
+</script>
+</body>
+</html>

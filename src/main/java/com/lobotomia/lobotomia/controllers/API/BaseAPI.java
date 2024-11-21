@@ -1,18 +1,13 @@
 package com.lobotomia.lobotomia.controllers.API;
 
-import com.lobotomia.lobotomia.Model.Roles;
 import com.lobotomia.lobotomia.Service.BaseService;
-import com.lobotomia.lobotomia.Service.RolesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public abstract class BaseAPI<T, ID> {
-
 
     @Autowired
     private final BaseService<T, ID> baseService;
@@ -50,3 +45,4 @@ public abstract class BaseAPI<T, ID> {
     }
 
 }
+

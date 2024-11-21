@@ -2,6 +2,7 @@ package com.lobotomia.lobotomia.config;
 
 import com.lobotomia.lobotomia.Model.Profile;
 import com.lobotomia.lobotomia.Model.RoleEnum;
+import com.lobotomia.lobotomia.Repository.ProfileRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -9,12 +10,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import com.lobotomia.lobotomia.Repository.ProfileRepository;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -46,20 +48,12 @@ public class WebSecurityConfig {
             user.setRoles(Collections.singleton(RoleEnum.ADMIN));
             profileRepository.save(user);
         }
-        if (!profileRepository.existsByUsername("sysadmin")) {
-            Profile user = new Profile();
-            user.setUsername("sysadmin");
-            user.setPassword(passwordEncoder.encode("sysadmin"));
-            user.setActive(true);
-            user.setRoles(Collections.singleton(RoleEnum.SYSADMIN));
-            profileRepository.save(user);
-        }
         if (!profileRepository.existsByUsername("manager")) {
             Profile user = new Profile();
             user.setUsername("manager");
             user.setPassword(passwordEncoder.encode("manager"));
             user.setActive(true);
-            user.setRoles(Collections.singleton(RoleEnum.MANAGERROLES));
+            user.setRoles(Collections.singleton(RoleEnum.MANAGER));
             profileRepository.save(user);
         }
     }
@@ -87,11 +81,10 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(authorize -> authorize
-                        .requestMatchers("/login", "/reg", "/api/**", "/students/**").permitAll()
-                        .requestMatchers("/users/**").hasAuthority("ADMIN")
-                        .requestMatchers("/profiles/**").hasAuthority("SYSADMIN")
-                        .requestMatchers("/roles/**").hasAuthority("MANAGERROLES")
-                        .requestMatchers("/orders/**").hasAuthority("USER")
+                        .requestMatchers("/login", "/reg", "/reg/user").permitAll()
+                        .requestMatchers("/users/**", "/api/**").hasAuthority("ADMIN")
+                        .requestMatchers("/carsList/**").hasAnyAuthority("MANAGER", "USER")
+                        .requestMatchers("/carsInfo/**", "/providersList/**", "/servicesList/**").hasAuthority("MANAGER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form ->
@@ -138,19 +131,12 @@ public class WebSecurityConfig {
                     .anyMatch(a -> a.getAuthority().equals("ADMIN"));
             boolean isUser = authentication.getAuthorities().stream()
                     .anyMatch(a -> a.getAuthority().equals("USER"));
-            boolean isSysAdmin = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("SYSADMIN"));
             boolean isManager = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("MANAGERROLES"));
-
-            if (isAdmin)
+                    .anyMatch(a -> a.getAuthority().equals("MANAGER"));
+            if(isAdmin)
                 response.sendRedirect("/users/all");
-            else if (isUser)
-                response.sendRedirect("/orders/all");
-            else if (isSysAdmin)
-                response.sendRedirect("/profiles/all");
-            else if (isManager)
-                response.sendRedirect("/roles/all");
+            else if (isUser || isManager)
+                response.sendRedirect("/carsList/all");
         };
     }
 }

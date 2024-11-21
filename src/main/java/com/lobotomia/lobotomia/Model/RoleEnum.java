@@ -4,7 +4,7 @@ package com.lobotomia.lobotomia.Model;
 import org.springframework.security.core.GrantedAuthority;
 
 public enum RoleEnum implements GrantedAuthority {
-    USER, ADMIN, SYSADMIN, MANAGERROLES;
+    USER, ADMIN, MANAGER;
 
     @Override
     public String getAuthority() {

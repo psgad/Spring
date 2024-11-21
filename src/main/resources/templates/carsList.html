@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+        }
+        header, .content {
+            margin: 20px;
+            padding: 20px;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+        }
+        a, button {
+            color: #ffffff;
+            background-color: #3b3b3b;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        input, select, p {
+            margin: 5px 0;
+            padding: 8px;
+            border: 1px solid #555;
+            background-color: #2b2b2b;
+            color: #e0e0e0;
+            border-radius: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #555;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #3b3b3b;
+        }
+        tr:hover {
+            background-color: #2e2e2e;
+            cursor: pointer;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .form-inline {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-inline input {
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <a href="/logout">Выйти</a>
+    <a th:if="${manager}" href="/providersList/all">Список поставщиков</a>
+    <a th:if="${manager}" href="/servicesList/all">Список услуг</a>
+</header>
+<div class="body">
+    <div class="content">
+        <header>
+            <h2>Список Машин</h2>
+            <input type="checkbox" id="selectAll" th:if="${manager}"/> Выбрать всех
+            <button id="delete" th:if="${manager}">Удалить</button>
+        </header>
+        <table>
+            <thead>
+            <tr>
+                <th th:if="${manager}"h></th>
+                <th th:if="${manager}">ID</th>
+                <th>Название машины</th>
+                <th>Цена</th>
+                <th>Количество</th>
+                <th>Описание</th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="car: ${carsList.getCurrentItems()}">
+                <tr th:data-id="${car.getId()}" th:data-title="${car.getTitle()}"
+                    th:data-price="${car.getPrice()}"
+                    th:data-count="${car.getCount()}">
+                    <td th:if="${manager}"><input type="checkbox" class="selectRow"/></td>
+                    <td th:text="${car.getId()}" th:if="${manager}"></td>
+                    <td th:text="${car.getTitle()}"></td>
+                    <td th:text="${car.getPrice()}"></td>
+                    <td th:text="${car.getCount()}"></td>
+                    <td>
+                        <a th:href="@{/carsList/{id}(id=${car.id})}" class="action-link">Перейти к описанию</a>
+                    </td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+        <div class="pagination">
+            <th:block th:if="${carsList.getCurrentPage() > 1}">
+                <a th:href="@{/carsList/all?(page=${carsList.getCurrentPage() - 1})}"></a>
+            </th:block>
+            <p th:text="|${carsList.getCurrentPage()}|"></p>
+            <th:block th:if="${carsList.getCurrentPage() < carsList.getTotalNumberPages()}">
+                <a th:href="@{/carsList/all?(page=${carsList.getCurrentPage() + 1})}"></a>
+            </th:block>
+        </div>
+    </div>
+    <div class="content" th:if="${manager}">
+        <header>
+            <h2>Добавление машины</h2>
+        </header>
+        <form class="createUser form-inline" method="POST" action="/carsList/add" id="userForm" th:object="${car}" >
+            <input placeholder="Название машины" id="firstname" th:field="*{title}" required>
+            <input placeholder="Цена" id="surname" type="number" th:field="*{price}" required>
+            <input placeholder="Количество" id="count" type="number" th:field="*{count}" required>
+            <button type="submit" formmethod="post">Создать</button>
+        </form>
+    </div>
+
+    <div class="content" th:if="${manager}">
+        <header>
+            <h2>Обновление информации о машине</h2>
+        </header>
+        <form class="updateUser form-inline" method="POST" action="/carsList/update" id="updateUserForm"
+              th:object="${car}">
+            <input type="hidden" name="id" id="updateUserId" th:field="*{id}"/>
+            <input placeholder="Название машины" th:field="*{title}" required id="updateFirstname">
+            <input placeholder="Цена" th:field="*{price}" required id="updateSurname">
+            <input placeholder="Количество" th:field="*{count}" required id="updateCount">
+            <button type="submit" formmethod="post">Обновить</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function selectElement(id, data) {
+        let select = document.getElementById(id);
+        for(var a = 0; a < select.length; a++){
+            if(select.options[a].text == data){
+                select.value = select.options[a].value;
+            }
+        }
+
+    }
+    document.querySelector('#selectAll').addEventListener('change', function() {
+        document.querySelectorAll('.selectRow').forEach(checkbox => checkbox.checked = this.checked);
+    });
+
+    document.querySelectorAll('tbody tr').forEach(row => {
+        row.addEventListener('click', function() {
+            // Для обновления
+            document.getElementById('updateUserId').value = this.getAttribute('data-id');
+            document.getElementById('updateFirstname').value = this.getAttribute('data-title');
+            document.getElementById('updateSurname').value = this.getAttribute('data-price');
+            document.getElementById('updateCount').value = this.getAttribute('data-count');
+        });
+    });
+    document.getElementById('delete').addEventListener('click', function() {
+    const selectedIds = Array.from(document.querySelectorAll('.selectRow:checked'))
+        .map(checkbox => checkbox.closest('tr').getAttribute('data-id'));
+
+    if (selectedIds.length === 0) {
+        alert('Выберите хотя бы одного пользователя для удаления.');
+        return;
+    }
+
+    fetch('/carsList/delete', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(selectedIds)
+    })
+    .then(response => {
+        if (response.ok) {
+            window.location.reload();
+        }  else {
+            return response.json().then(error => {
+                alert(`Ошибка: ${error.message || 'Не удалось удалить пользователей'}`);
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при удалении пользователей.');
+    });
+});
+</script>
+
+</body>
+</html>
