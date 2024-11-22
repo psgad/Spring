@@ -46,14 +46,14 @@ public class CarInfoController extends BaseController<Car_info, UUID> {
         entity.setDateCreation(baseService.findById(entity.getId()).getDateCreation() == null ? new Date() : baseService.findById(entity.getId()).getDateCreation());
         entity.setCar(baseService.findById(entity.getId()).getCar());
         baseService.edit(entity.getId(), entity);
-        return "redirect:/" + title_list + "/all";
+        return "redirect:/carsList/all";
 
     }
 
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable("id") UUID id) {
         baseService.delete(id);
-        return "redirect:/" + title_list + "/all";
+        return "redirect:/carsList/all";
 
     }
 

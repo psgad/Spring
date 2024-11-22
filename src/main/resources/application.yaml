@@ -19,6 +19,6 @@ server:
   port: 5252
   servlet:
     session:
-      timeout=15s:
+      timeout=15s
 some:
   value: false

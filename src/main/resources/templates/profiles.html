@@ -109,16 +109,13 @@
 </head>
 <body>
 <header>
-    <a href="/">Назад</a>
-    <form method="GET" id="search">
-        <input placeholder="Поиск по имени" name="firstname"/>
-        <button>Поиск</button>
-    </form>
+    <a href="/logout">Выйти</a>
+    <a href="/users/all">Список пользователей</a>
 </header>
 <div class="body">
     <div class="content">
         <header>
-            <h2>Список пользователей</h2>
+            <h2>Список учетных записей</h2>
             <input type="checkbox" id="selectAll"/> Выбрать всех
             <button id="delete">Удалить</button>
         </header>
@@ -164,7 +161,7 @@
     </div>
     <div class="content">
         <header>
-            <h2>Создание пользователя</h2>
+            <h2>Создание учетной записи</h2>
         </header>
         <form class="createUser form-inline" method="POST" action="/profiles/add" id="userForm" th:object="${profile}">
             <input placeholder="Логин" id="login" th:field="*{username}" required>
@@ -175,7 +172,7 @@
 
     <div class="content">
         <header>
-            <h2>Обновление пользователя</h2>
+            <h2>Обновление учетной записи</h2>
         </header>
         <form class="updateUser form-inline" method="POST" action="/profiles/update" id="updateUserForm"
               th:object="${profile}">

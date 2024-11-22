@@ -35,12 +35,12 @@ public class CarsService extends BaseService<Cars, UUID> {
     public void delete(UUID id) {
         if (carsRepository.existsById(id)) {
             Cars car = carsRepository.getReferenceById(id);
-            if (car.getCount() == 1)
+            if (car.getCount() == 1) {
+                car.setCount(0);
                 car.setDeleted(true);
-            else if (car.getCount() > 1) {
+            } else if (car.getCount() > 1)
                 car.setCount(car.getCount() - 1);
-                carsRepository.save(car);
-            }
+            carsRepository.save(car);
         }
     }
 }

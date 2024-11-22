@@ -116,10 +116,10 @@
 </header>
 <div class="body">
     <div class="content">
-        <header>
+        <header th:if="${manager}">
             <h2>Список Машин</h2>
-            <input type="checkbox" id="selectAll" th:if="${manager}"/> Выбрать всех
-            <button id="delete" th:if="${manager}">Удалить</button>
+            <input type="checkbox" id="selectAll" /> Выбрать всех
+            <button id="delete" >Удалить</button>
         </header>
         <table>
             <thead>

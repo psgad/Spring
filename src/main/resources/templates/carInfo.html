@@ -419,8 +419,8 @@
         })
         .then(response => {
             if (response.ok) {
-                alert("Заказ успешно оформлен!");
-                location.reload();
+                alert('Заказ успешно оформлен')
+                window.location.href = '/carsList/all';
             } else {
                 alert("Ошибка при оформлении заказа.");
             }

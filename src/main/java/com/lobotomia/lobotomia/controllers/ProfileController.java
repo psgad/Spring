@@ -42,4 +42,19 @@ public class ProfileController extends BaseController<Profile, UUID> {
         return "redirect:/profiles/all";
 
     }
+
+    @Override
+    @PostMapping("/add")
+    public String create(@Valid @ModelAttribute("profile") Profile profile, BindingResult result, Model model) {
+        profile.setPassword(passwordEncoder.encode(profile.getPassword()));
+        profile.setActive(true);
+        profile.setRoles(switch (profile.getUsername()) {
+            case "admin" -> Collections.singleton(RoleEnum.ADMIN);
+            case "manager" -> Collections.singleton(RoleEnum.MANAGER);
+            default -> Collections.singleton(RoleEnum.USER);
+        });
+        profileService.add(profile);
+        return "redirect:/profiles/all";
+
+    }
 }

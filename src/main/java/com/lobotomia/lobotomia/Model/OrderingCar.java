@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -21,6 +22,7 @@ public class OrderingCar {
     Cars cars;
 
     @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date date;
 
     @ManyToMany

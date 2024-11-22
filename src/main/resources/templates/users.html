@@ -109,11 +109,8 @@
 </head>
 <body>
 <header>
-    <a href="/users/all">Назад</a>
-    <form method="GET" id="search">
-        <input placeholder="Поиск по имени" name="firstname"/>
-        <button>Поиск</button>
-    </form>
+    <a href="/logout">выйти</a>
+    <a href="/profiles/all">Список учетных записей</a>
 </header>
 <div class="body">
     <div class="content">
@@ -132,14 +129,18 @@
                 <th>Отчество</th>
                 <th>Номер телефона</th>
                 <th>Используемый логин</th>
+                <th>Дата рождения</th>
             </tr>
             </thead>
             <tbody>
             <th:block th:each="user: ${users.getCurrentItems()}">
-                <tr th:data-id="${user.id}" th:data-firstname="${user.getFirstname()}"
-                    th:data-surname="${user.getMiddleName()}" th:data-lastname="${user.getLastname()}"
-                    th:data-role="${user.getProneNumber()}" th:data-profile="${user.getProfile().getUsername()}"
-                    th:data-order-list="${doing}">
+                <tr th:data-id="${user.id}"
+                    th:data-firstname="${user.getFirstname()}"
+                    th:data-surname="${user.getLastname()}"
+                    th:data-lastname="${user.getMiddleName()}"
+                    th:data-phone="${user.getProneNumber()}"
+                    th:data-profile="${user.getProfile().getUsername()}"
+                    th:data-birth="${user.getDate()}">
                     <td><input type="checkbox" class="selectRow"/></td>
                     <td th:text="${user.getId()}"></td>
                     <td th:text="${user.getFirstname()}"></td>
@@ -147,6 +148,7 @@
                     <td th:text="${user.getLastname()}"></td>
                     <td th:text="${user.getProneNumber()}"></td>
                     <td th:text="${user.getProfile().getUsername()}"></td>
+                    <td th:text="${user.getDate()}"></td>
                 </tr>
             </th:block>
             </tbody>
@@ -176,6 +178,8 @@
             <input placeholder="Имя" id="firstname" th:field="*{firstname}" required>
             <input placeholder="Фамилия" id="surname" th:field="*{middleName}" required>
             <input placeholder="Отчество" required th:field="*{lastname}">
+            <input placeholder="Номер телефно" type="tel" required th:field="*{proneNumber}">
+            <input placeholder="Дата рождения" type="date" required th:field="*{date}">
             <label for="profile">Логин</label>
             <select class="form-control" id="profile" name="profile.id" required>
                 <option th:each="profile : ${profiles}" th:value="${profile.getId()}"
@@ -195,7 +199,9 @@
             <input placeholder="Имя" id="updateFirstname" th:field="*{firstname}" required>
             <input placeholder="Фамилия" id="updateSurname" th:field="*{middleName}" required>
             <input placeholder="Отчество" required th:field="*{lastname}" id="updateLastname">
-            <label for="updateProfile">Логин</label>
+            <input placeholder="Номер телефона" type="tel" required th:field="*{proneNumber}" id="updatePhone">
+            <input placeholder="Дата рождения" type="date" required th:field="*{date}" id="updateDate">
+            <label for="updateProfile">Используемый логин</label>
             <select class="form-control" id="updateProfile" name="profile.id" required>
                 <option th:each="profile : ${profiles}" th:value="${profile.getId()}"
                         th:text="${profile.getUsername()}"></option>
@@ -208,67 +214,82 @@
 
 <script>
     function selectElement(id, data) {
-    let select = document.getElementById(id);
-    for (let i = 0; i < select.options.length; i++) {
-        if (select.options[i].text === data) {
-            select.value = select.options[i].value;
-            break; // Найдено, прерываем цикл
-        }
-    }
-}
-
-// Выбор всех строк
-document.querySelector('#selectAll').addEventListener('change', function() {
-    document.querySelectorAll('.selectRow').forEach(checkbox => checkbox.checked = this.checked);
-});
-
-// Клик по строке таблицы
-document.querySelectorAll('tbody tr').forEach(row => {
-    row.addEventListener('click', function(event) {
-        document.getElementById('updateUserId').value = this.getAttribute('data-id');
-        document.getElementById('updateFirstname').value = this.getAttribute('data-firstname');
-        document.getElementById('updateSurname').value = this.getAttribute('data-surname');
-        document.getElementById('updateLastname').value = this.getAttribute('data-lastname');
-
-        selectElement('updateRole', this.getAttribute('data-role'));
-        selectElement('updateProfile', this.getAttribute('data-profile'));
-        selectElement('user_id', this.getAttribute('data-firstname'));
-
-    });
-});
-
-// Удаление пользователей
-document.getElementById('delete').addEventListener('click', function() {
-    const selectedIds = Array.from(document.querySelectorAll('.selectRow:checked'))
-        .map(checkbox => checkbox.closest('tr').getAttribute('data-id'));
-
-    if (selectedIds.length === 0) {
-        alert('Выберите хотя бы одного пользователя для удаления.');
-        return;
+        const select = document.getElementById(id);
+        if (!select) return; // Проверка на существование элемента
+        Array.from(select.options).forEach(option => {
+            if (option.text === data) {
+                select.value = option.value;
+            }
+        });
     }
 
-    fetch('/users/delete', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(selectedIds)
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(error => {
-                throw new Error(error.message || 'Не удалось удалить пользователей');
-            });
-        }
-        alert('Пользователи успешно удалены!');
-        window.location.reload();
-    })
-    .catch(error => {
-        console.error('Ошибка:', error);
-        alert(`Ошибка: ${error.message || 'Произошла ошибка при удалении пользователей.'}`);
+    // Выбор всех строк
+    document.querySelector('#selectAll').addEventListener('change', function () {
+        document.querySelectorAll('.selectRow').forEach(checkbox => checkbox.checked = this.checked);
     });
-});
 
+    // Клик по строке таблицы
+    document.querySelectorAll('tbody tr').forEach(row => {
+        row.addEventListener('click', function () {
+            document.getElementById('updateUserId').value = this.getAttribute('data-id');
+            document.getElementById('updateFirstname').value = this.getAttribute('data-firstname');
+            document.getElementById('updateSurname').value = this.getAttribute('data-surname');
+            document.getElementById('updateLastname').value = this.getAttribute('data-lastname');
+            document.getElementById('updatePhone').value = this.getAttribute('data-phone');
+            const dateBirth = this.getAttribute('data-birth');
+            if (dateBirth) {
+                const formattedDate = formatDateForInput(dateBirth);
+                document.getElementById('updateDate').value = formattedDate;
+            }
+            selectElement('updateProfile', this.getAttribute('data-profile'));
+        });
+    });
+    function formatDateForInput(dateStr) {
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return ''; // Проверка на корректность даты
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяц с нулём
+        const day = String(date.getDate()).padStart(2, '0'); // День с нулём
+        return `${year}-${month}-${day}`;
+    }
+
+    // Удаление пользователей
+    document.getElementById('delete').addEventListener('click', function () {
+        const selectedIds = Array.from(document.querySelectorAll('.selectRow:checked'))
+            .map(checkbox => checkbox.closest('tr').getAttribute('data-id'));
+
+        if (selectedIds.length === 0) {
+            alert('Выберите хотя бы одного пользователя для удаления.');
+            return;
+        }
+
+        // Отправка POST-запроса
+        if (!window.fetch) {
+            alert('Ваш браузер не поддерживает Fetch API.');
+            return;
+        }
+
+        fetch('/users/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(selectedIds)
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(error => {
+                    throw new Error(error.message || 'Не удалось удалить пользователей');
+                });
+            }
+            alert('Пользователи успешно удалены!');
+            window.location.reload();
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert(`Ошибка: ${error.message || 'Произошла ошибка при удалении пользователей.'}`);
+        });
+    });
 </script>
 
 </body>
