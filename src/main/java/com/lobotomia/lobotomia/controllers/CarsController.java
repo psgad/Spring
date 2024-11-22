@@ -6,7 +6,6 @@ import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,8 +16,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import static com.lobotomia.lobotomia.controllers.AuthentificationUser.getCurrentUser;
-import static com.lobotomia.lobotomia.controllers.AuthentificationUser.getCurrentUserId;
 
 @Controller
 @RequestMapping("/carsList")
@@ -44,7 +41,7 @@ public class CarsController extends BaseController<Cars, UUID> {
     @Override
     @GetMapping("/all")
     public String getAll(Model model,
-                         @RequestParam(name = "page", required = false, defaultValue = "1") int page) throws InstantiationException, IllegalAccessException {
+                         @RequestParam(name = "page", required = false, defaultValue = "1") int page) {
         Pagination<Cars> list = baseService.findAll(page);
         System.out.println("количество " + title_model + ": " + list.getCurrentItems().size());
         model.addAttribute(title_list, list);
@@ -76,7 +73,7 @@ public class CarsController extends BaseController<Cars, UUID> {
     }
 
     @PostMapping("/{id}/add_order")
-    public String createOrder(@PathVariable("id") UUID id, @Nullable @RequestBody List<UUID> ids, Model model) {
+    public String createOrder(@PathVariable("id") UUID id, @Nullable @RequestBody List<UUID> ids) {
         OrderingCar order = new OrderingCar();
         order.setCars(baseService.findById(id));
         order.setDate(new Date());
@@ -97,6 +94,23 @@ public class CarsController extends BaseController<Cars, UUID> {
         baseService.delete(id);
         return "redirect:/carsList/all";
 
+    }
+
+    public  UserDetails getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            return (UserDetails) principal;
+        }
+        return null;
+    }
+
+    public  UUID getCurrentUserId() {
+        String currentUsername = getCurrentUser().getUsername();
+        for (Profile profile : profileService.findAll())
+            if (profile.getUsername().equals(currentUsername))
+                return profile.getUsers().getId();
+        return null;
     }
 
 }

@@ -4,12 +4,16 @@ import com.lobotomia.lobotomia.Model.Profile;
 import com.lobotomia.lobotomia.Model.RoleEnum;
 import com.lobotomia.lobotomia.Model.Users;
 import com.lobotomia.lobotomia.Repository.ProfileRepository;
+import com.lobotomia.lobotomia.Service.ProfileService;
 import com.lobotomia.lobotomia.Service.UsersService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +38,7 @@ public class RegisterController {
 
     @Autowired
     UsersService usersService;
+
 
     @GetMapping("/reg")
     public String registrationView(Model model) {
@@ -71,7 +76,7 @@ public class RegisterController {
         UUID id = UUID.fromString(userToken);
         Users users = usersService.findById(id);
         users.setProfile(user);
-        usersService.edit(id, users);
+        usersService.add(users);
 
         return "redirect:/login";
     }
@@ -117,6 +122,8 @@ public class RegisterController {
         response.addCookie(cookie);
         return "redirect:/reg";
     }
+
+
 
 
 }

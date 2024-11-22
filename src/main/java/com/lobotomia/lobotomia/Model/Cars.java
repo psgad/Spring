@@ -27,11 +27,11 @@ public class Cars {
     boolean isDeleted;
 
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-    @OneToOne(mappedBy = "cars")
+    @OneToOne(mappedBy = "cars", cascade = CascadeType.ALL)
     Car_info car_info;
 
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-    @OneToMany(mappedBy = "cars")
+    @OneToMany(mappedBy = "cars", cascade = CascadeType.ALL)
     List<OrderingCar> orderingCar;
 
 

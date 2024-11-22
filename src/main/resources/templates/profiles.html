@@ -64,6 +64,47 @@
         .form-inline input {
             width: 150px;
         }
+              .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            padding: 20px 0;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .pagination-button {
+            padding: 10px 20px;
+            background-color: #2b2b2b;
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            display: inline-block;
+        }
+
+        .pagination-button:hover {
+            background-color: #555;
+            color: #ffffff;
+        }
+
+        .pagination-button.prev::before {
+            content: '← ';
+        }
+
+        .pagination-button.next::after {
+            content: ' →';
+        }
+
+        .pagination-info {
+            color: #e0e0e0;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -91,7 +132,7 @@
             </tr>
             </thead>
             <tbody>
-            <th:block th:each="Profile: ${profilesList}">
+            <th:block th:each="Profile: ${profiles.getCurrentItems()}">
                 <tr th:data-id="${Profile.getId()}" th:data-login="${Profile.getUsername()}"
                     th:data-password="${Profile.getPassword()}">
                     <td><input type="checkbox" class="selectRow"/></td>
@@ -102,15 +143,24 @@
             </th:block>
             </tbody>
         </table>
-        <!--        <div class="pagination">-->
-        <!--            <th:block th:if="${pagination_users.getCurrentPage() > 1}">-->
-        <!--                <a th:href="@{/users?(page=${pagination_users.getCurrentPage() - 1})}"><</a>-->
-        <!--            </th:block>-->
-        <!--            <p th:text="|${pagination_users.getCurrentPage()}|"></p>-->
-        <!--            <th:block th:if="${pagination_users.getCurrentPage() < pagination_users.getTotalNumberPages()}">-->
-        <!--                <a th:href="@{/users?(page=${pagination_users.getCurrentPage() + 1})}">></a>-->
-        <!--            </th:block>-->
-        <!--        </div>-->
+        <div class="pagination">
+            <th:block th:if="${profiles.getCurrentPage() > 1}">
+                <a th:href="@{/profiles/all?(page=${profiles.getCurrentPage() - 1})}"
+                   class="pagination-button prev">
+                    Предыдущая
+                </a>
+            </th:block>
+            <p class="pagination-info">
+                Страница <span th:text="${profiles.getCurrentPage()}"></span> из <span
+                    th:text="${profiles.getTotalNumberPages()}"></span>
+            </p>
+            <th:block th:if="${profiles.getCurrentPage() < profiles.getTotalNumberPages()}">
+                <a th:href="@{/profiles/all?(page=${profiles.getCurrentPage() + 1})}"
+                   class="pagination-button next">
+                    Следующая
+                </a>
+            </th:block>
+        </div>
     </div>
     <div class="content">
         <header>

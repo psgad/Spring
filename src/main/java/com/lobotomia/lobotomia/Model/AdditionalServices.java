@@ -22,7 +22,7 @@ public class AdditionalServices {
     int price;
 
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "additional_serices_by_car", joinColumns = @JoinColumn(name = "service_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))
     List<OrderingCar> orders;
 

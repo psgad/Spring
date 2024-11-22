@@ -37,7 +37,8 @@ public class Providers {
     @OneToMany(fetch = FetchType.LAZY)
     List<Car_info> carInfo;
 
-    public Providers(){}
+    public Providers() {
+    }
 
     public Providers(UUID id, String title, String description, Long INN, int rate, List<Car_info> carInfo) {
         this.id = id;

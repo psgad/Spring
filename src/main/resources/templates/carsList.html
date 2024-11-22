@@ -64,6 +64,47 @@
         .form-inline input {
             width: 150px;
         }
+              .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            padding: 20px 0;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .pagination-button {
+            padding: 10px 20px;
+            background-color: #2b2b2b;
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            display: inline-block;
+        }
+
+        .pagination-button:hover {
+            background-color: #555;
+            color: #ffffff;
+        }
+
+        .pagination-button.prev::before {
+            content: '← ';
+        }
+
+        .pagination-button.next::after {
+            content: ' →';
+        }
+
+        .pagination-info {
+            color: #e0e0e0;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -71,6 +112,7 @@
     <a href="/logout">Выйти</a>
     <a th:if="${manager}" href="/providersList/all">Список поставщиков</a>
     <a th:if="${manager}" href="/servicesList/all">Список услуг</a>
+    <a th:if="${manager}" href="/orders/all">Список заказов</a>
 </header>
 <div class="body">
     <div class="content">
@@ -82,7 +124,7 @@
         <table>
             <thead>
             <tr>
-                <th th:if="${manager}"h></th>
+                <th th:if="${manager}" h></th>
                 <th th:if="${manager}">ID</th>
                 <th>Название машины</th>
                 <th>Цена</th>
@@ -109,11 +151,20 @@
         </table>
         <div class="pagination">
             <th:block th:if="${carsList.getCurrentPage() > 1}">
-                <a th:href="@{/carsList/all?(page=${carsList.getCurrentPage() - 1})}"></a>
+                <a th:href="@{/carsList/all?(page=${carsList.getCurrentPage() - 1})}"
+                   class="pagination-button prev">
+                    Предыдущая
+                </a>
             </th:block>
-            <p th:text="|${carsList.getCurrentPage()}|"></p>
+            <p class="pagination-info">
+                Страница <span th:text="${carsList.getCurrentPage()}"></span> из <span
+                    th:text="${carsList.getTotalNumberPages()}"></span>
+            </p>
             <th:block th:if="${carsList.getCurrentPage() < carsList.getTotalNumberPages()}">
-                <a th:href="@{/carsList/all?(page=${carsList.getCurrentPage() + 1})}"></a>
+                <a th:href="@{/carsList/all?(page=${carsList.getCurrentPage() + 1})}"
+                   class="pagination-button next">
+                    Следующая
+                </a>
             </th:block>
         </div>
     </div>
@@ -121,7 +172,7 @@
         <header>
             <h2>Добавление машины</h2>
         </header>
-        <form class="createUser form-inline" method="POST" action="/carsList/add" id="userForm" th:object="${car}" >
+        <form class="createUser form-inline" method="POST" action="/carsList/add" id="userForm" th:object="${car}">
             <input placeholder="Название машины" id="firstname" th:field="*{title}" required>
             <input placeholder="Цена" id="surname" type="number" th:field="*{price}" required>
             <input placeholder="Количество" id="count" type="number" th:field="*{count}" required>

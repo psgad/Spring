@@ -30,7 +30,7 @@ public class Profile {
     Set<RoleEnum> roles;
 
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-    @OneToOne(mappedBy = "profile")
+    @OneToOne(mappedBy = "profile", cascade = CascadeType.ALL)
     Users users;
 
     public Profile() {

@@ -82,9 +82,9 @@ public class WebSecurityConfig {
         http
                 .authorizeRequests(authorize -> authorize
                         .requestMatchers("/login", "/reg", "/reg/user").permitAll()
-                        .requestMatchers("/users/**", "/api/**").hasAuthority("ADMIN")
+                        .requestMatchers("/users/**", "/api/**", "/profiles/**").hasAuthority("ADMIN")
                         .requestMatchers("/carsList/**").hasAnyAuthority("MANAGER", "USER")
-                        .requestMatchers("/carsInfo/**", "/providersList/**", "/servicesList/**").hasAuthority("MANAGER")
+                        .requestMatchers("/carsInfo/**", "/orders/**" , "/providersList/**", "/servicesList/**").hasAuthority("MANAGER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form ->

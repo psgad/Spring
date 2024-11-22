@@ -24,7 +24,7 @@ public class OrderingCar {
     Date date;
 
     @ManyToMany
-    @JoinTable(name = "user_order",joinColumns = @JoinColumn(name = "order_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @JoinTable(name = "user_order", joinColumns = @JoinColumn(name = "order_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     List<Users> users;
 
     @ManyToMany
@@ -40,6 +40,14 @@ public class OrderingCar {
         this.date = date;
         this.users = users;
         this.services = services;
+    }
+
+    public int getTotalPrice() {
+        int price = 0;
+        price += cars.getPrice();
+        for (AdditionalServices service : services)
+            price += service.getPrice();
+        return price;
     }
 
     public UUID getId() {

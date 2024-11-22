@@ -33,8 +33,6 @@ public class CarInfoController extends BaseController<Car_info, UUID> {
         entity.setDateCreation(new Date());
         Cars car = carsService.findById(id);
         entity.setCar(car);
-        car.setCar_info(entity);
-        carsService.edit(id, car);
         if (result.hasErrors()) {
             return "redirect:/" + "carsList/" + id;
         }
